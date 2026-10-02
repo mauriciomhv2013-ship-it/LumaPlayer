@@ -38,6 +38,20 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      - name: Ajustar compatibilidad JVM
+        working-directory: project
+        run: |
+          awk '{
+            print
+            if ($0 ~ /compileSdk 35/) {
+              print "    compileOptions {"
+              print "        sourceCompatibility JavaVersion.VERSION_17"
+              print "        targetCompatibility JavaVersion.VERSION_17"
+              print "    }"
+            }
+          }' app/build.gradle > app/build.gradle.tmp
+          mv app/build.gradle.tmp app/build.gradle
+
       - name: Compilar APK
         working-directory: project
         run: gradle --no-daemon assembleDebug
